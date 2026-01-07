@@ -24,7 +24,16 @@ def compile_ezcbl(source:str, file_name:str) -> str:
     data:list[str] = [f'{COL8}DATA DIVISION.',
                       f'{COL8}WORKING-STORAGE SECTION.']
 
-    procedure:list[str] = [f'{COL8}PROCEDURE DIVISION.']
+    procedure:list[str] = [f'{COL8}PROCEDURE DIVISION.',
+                           f'',
+                           f'{COL8}{TAB}PERFORM 2000-TRAITEMENT-PRINCIPAL',
+                           f'',
+                           f'{COL8}{TAB}.']
+    
+    main_process:list[str] = [f'{COL8}2000-TRAITEMENT-PRINCIPAL.']
+
+    paragraphs:list[str] = []
+
 
     pattern = r'(\w+)\(([^)]+)\)'
 
@@ -39,23 +48,26 @@ def compile_ezcbl(source:str, file_name:str) -> str:
 
         data.append(f"{COL8}01 LT-{func_name} PIC X(08) VALUE '{func_name}'.")
 
-        procedure.append(f"{COL8}{TAB}PERFORM CALL-{func_name}")
-        procedure.append(f"")
-        procedure.append(f"{COL8}CALL-{func_name}.")
+        main_process.append(f"{COL8}{TAB}PERFORM CALL-{func_name}")
+        paragraphs.append(f"")
+        paragraphs.append(f"{COL8}CALL-{func_name}.")
 
         for arg in args:
-            procedure.append(f"{COL8}{TAB}MOVE {arg}")
-            procedure.append(f"{COL8}{TAB}  TO {arg} OF WS-PARAMS")
-            procedure.append(f"")
+            paragraphs.append(f"{COL8}{TAB}MOVE {arg}")
+            paragraphs.append(f"{COL8}{TAB}  TO {arg} OF WS-PARAMS")
+            paragraphs.append(f"")
 
-        procedure.append(f"{COL8}{TAB}CALL LT-{func_name} USING WS-PARAMS")
-        procedure.append(f"{COL8}{TAB}.")
-        procedure.append(f"")
+        paragraphs.append(f"{COL8}{TAB}CALL LT-{func_name} USING WS-PARAMS")
+        paragraphs.append(f"{COL8}{TAB}.")
+        paragraphs.append(f"")
 
+    main_process.append(f'{COL8}{TAB}.')
     output:list[str] = []
     output.extend(header)
     output.extend(data)
     output.extend(procedure)
+    output.extend(main_process)
+    output.extend(paragraphs)
 
     return '\n'.join(output)
 
