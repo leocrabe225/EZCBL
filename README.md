@@ -55,11 +55,29 @@ CUSTOMER_VALIDATE(CUST-ID, CUST-NAME, STATUS-CODE)
 
 ## Status
 
-🚧 **Early Development** - Currently implementing basic function call compilation.
+🚀 **v0.2 - Working Prototype**
+
+Currently implemented:
+- ✅ Basic function call syntax
+- ✅ Multiple function calls per file
+- ✅ Automatic Working-Storage literal generation
+- ✅ File output (.ezcbl → .cbl)
+- ✅ Proper COBOL structure (DATA/PROCEDURE DIVISION)
+- ✅ Generated code header with timestamp
+
+Try it:
+```bash
+python ezcbl.py yourfile.ezcbl
+# Generates yourfile.cbl
+```
 
 ## Roadmap
 
 - [x] Basic function call syntax
+- [x] File output generation
+- [x] Working-Storage literal generation
+- [x] Multiple function calls per file
+- [ ] Main program flow / paragraph sequencing
 - [ ] Variable declarations
 - [ ] Control flow (if/switch)
 - [ ] Error handling boilerplate
