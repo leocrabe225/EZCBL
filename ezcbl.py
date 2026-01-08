@@ -6,6 +6,7 @@ TAB = "    "
 # Used for token that can be found on the 7th, column. Like the '*' for comments.
 COL7 = "      "
 COL8 = "       "
+SPACING_LINE = ''
 
 def get_output_generation_header(file_name:str) -> list[str]:
     header:list[str] = []
@@ -16,6 +17,12 @@ def get_output_generation_header(file_name:str) -> list[str]:
 
     return header
 
+def get_finish_program_paragraph():
+    paragraph:list[str] = [f'{COL8}9000-TERMINER-PROGRAMME',
+                           f'{COL8}{TAB}GOBACK',
+                           f'{COL8}{TAB}.']
+    return paragraph
+
 
 
 def compile_ezcbl(source:str, file_name:str) -> str:
@@ -25,10 +32,13 @@ def compile_ezcbl(source:str, file_name:str) -> str:
                       f'{COL8}WORKING-STORAGE SECTION.']
 
     procedure:list[str] = [f'{COL8}PROCEDURE DIVISION.',
-                           f'',
+                           SPACING_LINE,
                            f'{COL8}{TAB}PERFORM 2000-TRAITEMENT-PRINCIPAL',
-                           f'',
-                           f'{COL8}{TAB}.']
+                           SPACING_LINE,
+                           f'{COL8}{TAB}PERFORM 9000-TERMINER-PROGRAMME',
+                           SPACING_LINE,
+                           f'{COL8}{TAB}.',
+                           SPACING_LINE]
     
     main_process:list[str] = [f'{COL8}2000-TRAITEMENT-PRINCIPAL.']
 
@@ -49,25 +59,27 @@ def compile_ezcbl(source:str, file_name:str) -> str:
         data.append(f"{COL8}01 LT-{func_name} PIC X(08) VALUE '{func_name}'.")
 
         main_process.append(f"{COL8}{TAB}PERFORM CALL-{func_name}")
-        paragraphs.append(f"")
         paragraphs.append(f"{COL8}CALL-{func_name}.")
 
         for arg in args:
             paragraphs.append(f"{COL8}{TAB}MOVE {arg}")
             paragraphs.append(f"{COL8}{TAB}  TO {arg} OF WS-PARAMS")
-            paragraphs.append(f"")
+            paragraphs.append(SPACING_LINE)
 
         paragraphs.append(f"{COL8}{TAB}CALL LT-{func_name} USING WS-PARAMS")
         paragraphs.append(f"{COL8}{TAB}.")
-        paragraphs.append(f"")
+        paragraphs.append(SPACING_LINE)
 
     main_process.append(f'{COL8}{TAB}.')
+    main_process.append(SPACING_LINE)
+    finish_program_paragraph = get_finish_program_paragraph()
     output:list[str] = []
     output.extend(header)
     output.extend(data)
     output.extend(procedure)
     output.extend(main_process)
     output.extend(paragraphs)
+    output.extend(finish_program_paragraph)
 
     return '\n'.join(output)
 
